@@ -16,12 +16,11 @@ jobs:
         run: |
           f=$(find proj -name settings.gradle.kts -not -path "*/extras/*" | head -1)
           if [ -z "$f" ]; then
-            echo "settings.gradle.kts NOT FOUND. Isi zip:"
+            echo "settings.gradle.kts NOT FOUND"
             find proj | head -60
             exit 1
           fi
           echo "dir=$(dirname "$f")" >> "$GITHUB_OUTPUT"
-          echo "Project dir: $(dirname "$f")"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -44,7 +43,14 @@ jobs:
             echo "=== END ==="
           fi
           exit $code
+      - name: Collect APK
+        shell: bash
+        run: |
+          mkdir -p out
+          apk=$(find proj -name "app-debug.apk" | head -1)
+          echo "APK: $apk"
+          cp "$apk" out/GameInsight-debug.apk
       - uses: actions/upload-artifact@v4
-        if: success()
         with:
           name: GameInsight-debug
+          path: out/GameInsight-debug.apk
