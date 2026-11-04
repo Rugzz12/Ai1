@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Extract project
-        run: unzip -q -o GameInsight.zip
+        run: unzip -q -o GameInsight-full.zip -d proj
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -18,7 +18,7 @@ jobs:
         with:
           gradle-version: 8.9
       - name: Build
-        working-directory: GameInsight
+        working-directory: proj
         shell: bash
         run: |
           set +e
@@ -29,6 +29,7 @@ jobs:
           echo "=== END ERRORS ==="
           exit $code
       - uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: GameInsight-debug
-          path: GameInsight/app/build/outputs/apk/debug/app-debug.apk
+          path: proj/app/build/outputs/apk/debug/app-debug.apk
